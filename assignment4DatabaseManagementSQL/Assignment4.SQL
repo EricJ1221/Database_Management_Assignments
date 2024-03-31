@@ -1,0 +1,98 @@
+/* Creating UNIVERSITY DATABASE SCHEMA in SQL*/
+
+CREATE TABLE STUDENT (
+    NAME VARCHAR(30),
+    STUDENT_NUMBER INT PRIMARY KEY,
+    CLASS INT,
+    MAJOR VARCHAR(5)
+);
+
+CREATE TABLE COURSE (
+    COURSE_NAME VARCHAR(30),
+    COURSE_NUMBER VARCHAR(30) PRIMARY KEY,
+    CREDIT_HOURS INT,
+    DEPARTMENT VARCHAR(30)
+);
+
+CREATE TABLE SECTION(
+    SECTION_IDENTIFIER INT,
+    COURSE_NUMBER VARCHAR(30),
+    SEMESTER VARCHAR(10),
+    YEAR INT,
+    INSTRUCTOR VARCHAR(30),
+    PRIMARY KEY (SECTION_IDENTIFIER, COURSE_NUMBER, SEMESTER, YEAR),
+    FOREIGN KEY (COURSE_NUMBER) REFERENCES COURSE(COURSE_NUMBER)
+);
+
+CREATE TABLE GRADE_REPORT(
+    STUDENT_NUMBER INT,
+    SECTION_IDENTIFIER INT,
+    GRADE VARCHAR(1),
+    PRIMARY KEY (STUDENT_NUMBER, SECTION_IDENTIFIER),
+    FOREIGN KEY (STUDENT_NUMBER) REFERENCES STUDENT(STUDENT_NUMBER) ON DELETE CASCADE,
+    FOREIGN KEY (SECTION_IDENTIFIER) REFERENCES SECTION(SECTION_IDENTIFIER)
+);
+
+CREATE TABLE PREREQUISITE(
+    COURSE_NUMBER VARCHAR(30),
+    PREREQUISITE_NUMBER VARCHAR(30),
+    PRIMARY KEY (COURSE_NUMBER, PREREQUISITE_NUMBER)
+);
+
+
+
+INSERT INTO STUDENT (NAME, STUDENT_NUMBER, CLASS, MAJOR) VALUES
+('Smith', 17, 1, 'CS'),
+('Brown', 8, 2, 'CS');
+
+INSERT INTO COURSE (COURSE_NAME, COURSE_NUMBER, CREDIT_HOURS, DEPARTMENT) VALUES
+('Intro to Computer Science', 'CS1310', 4, 'CS'),
+('Data Structures', 'CS3320', 4, 'CS'),
+('Discrete Mathematics', 'MATH2410', 3, 'MATH'),
+('Database', 'CS3380', 3, 'CS');
+
+INSERT INTO SECTION (SECTION_IDENTIFIER, COURSE_NUMBER, SEMESTER, YEAR, INSTRUCTOR) VALUES
+(85, 'MATH2410', 'Fall', 07, 'King'),
+(92, 'CS1310', 'Fall', 07, 'Anderson'),
+(102, 'CS3320', 'Spring', 08, 'Knuth'),
+(112, 'MATH2410', 'Fall', 08, 'Chang'),
+(119, 'CS1310', 'Fall', 08, 'Anderson'),
+(135, 'CS3380', 'Fall', 08, 'Stone');
+
+INSERT INTO GRADE_REPORT (STUDENT_NUMBER, SECTION_IDENTIFIER, GRADE) VALUES
+(17, 112, 'B'),
+(17, 119, 'C'),
+(8, 85, 'A'),
+(8, 92, 'A'),
+(8, 102, 'B'),
+(8, 135, 'A');
+
+INSERT INTO PREREQUISITE (COURSE_NUMBER, PREREQUISITE_NUMBER) VALUES
+('CS3380', 'CS3320'),
+('CS3380', 'MATH2410'),
+('CS3320', 'CS1310');
+
+
+/*  Insert a new student, <‘Johnson’, 25, 1, ‘Math’>, in the database.  */
+INSERT INTO STUDENT (NAME, STUDENT_NUMBER, CLASS, MAJOR)
+VALUES ('Johnson', 25, 1, 'MATH');
+
+/*  Change the class of student ‘Smith’ to 2.  */
+UPDATE STUDENT
+SET CLASS = 2
+WHERE NAME = 'Smith';
+
+/*  Insert a new course, <‘Knowledge Engineering’, ‘CS4390’, 3, ‘CS’>.  */
+INSERT INTO COURSE (COURSE_NAME, COURSE_NUMBER, CREDIT_HOURS, DEPARTMENT)
+VALUES ('Knowledge Engineering', 'CS4390', 3, 'CS');
+
+DELETE FROM STUDENT
+WHERE NAME = 'Smith' AND STUDENT_NUMBER = 17;
+/* An error message occurs informing me that deletion of the student record is being prevented because there are 
+related records in the GRADE_REPORT table that reference the student via the'STUDENT_NUMBER' foreign key cosntraint.
+After changing the foreign key constraint to "ON DELETE CASCADE," I receive no error and the student named 'Smith' 
+with STUDENT_NUMBER = 17 and all corresponding data are removed from the database.*/
+
+
+
+
